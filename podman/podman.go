@@ -11,7 +11,7 @@ import (
 	"github.com/opencontainers/runtime-spec/specs-go"
 )
 
-const ContainerSocket = "unix:///var/run/docker.sock" // TODO: parameterize this (using the pal config file)
+const ContainerSocket = "unix:///run/user/1000/podman/podman.sock" // TODO: parameterize this (using the pal config file)
 
 func ptr[T any](v T) *T {
 	return &v
@@ -34,13 +34,13 @@ func CommandContext(ctx context.Context, rawImage, workingDir, name string, arg 
 	}
 	s := specgen.NewSpecGenerator(rawImage, false)
 	s.Command = []string{name}
-	for _, val := range arg {
-		s.Command = append(s.Command, val)
-	}
+	s.Command = append(s.Command, arg...)
 	s.Mounts = []specs.Mount{
 		{
 			Destination: workingDir, // TODO: fix this ... move to a temp working dir inside, update options, mappings etc.
 			Source:      workingDir,
+			Type:        "bind",
+			Options:     []string{"rbind", "rw"},
 		},
 	}
 	createResponse, err := containers.CreateWithSpec(conn, s, nil)
