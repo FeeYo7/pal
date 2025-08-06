@@ -273,7 +273,7 @@ func RunGroup(c echo.Context) error {
 
 	if actionData.Background {
 		go func() {
-			cmdOutput, duration, err := utils.CmdRun(actionData, config.GetConfigStr("global_cmd_prefix"), config.GetConfigStr("global_working_dir"))
+			cmdOutput, duration, err := utils.CmdRunContainerized(actionData, config.GetConfigStr("global_cmd_prefix"), config.GetConfigStr("global_working_dir"))
 			actionData.Cmd = cmdOrig
 			if err != nil {
 				if !actionData.Concurrent {
@@ -361,7 +361,7 @@ func RunGroup(c echo.Context) error {
 		return c.String(http.StatusOK, "running in background")
 	}
 
-	cmdOutput, duration, err := utils.CmdRun(actionData, config.GetConfigStr("global_cmd_prefix"), config.GetConfigStr("global_working_dir"))
+	cmdOutput, duration, err := utils.CmdRunContainerized(actionData, config.GetConfigStr("global_cmd_prefix"), config.GetConfigStr("global_working_dir"))
 	actionData.Cmd = cmdOrig
 	if err != nil {
 		if !actionData.Concurrent {
@@ -1196,7 +1196,7 @@ func cronTask(res data.ActionData) string {
 	cmdOrig := res.Cmd
 	res.Cmd = cmdString(res, "", "")
 	timeNow := utils.TimeNow(config.GetConfigStr("global_timezone"))
-	cmdOutput, duration, err := utils.CmdRun(res, config.GetConfigStr("global_cmd_prefix"), config.GetConfigStr("global_working_dir"))
+	cmdOutput, duration, err := utils.CmdRunContainerized(res, config.GetConfigStr("global_cmd_prefix"), config.GetConfigStr("global_working_dir"))
 	res.Cmd = cmdOrig
 	if err != nil {
 		res.Status = "error"
@@ -1414,7 +1414,7 @@ func runBackground(group, action, input string) {
 	actionData := db.DBC.GetGroupAction(group, action)
 	origCmd := actionData.Cmd
 	actionData.Cmd = cmdString(actionData, input, "")
-	cmdOutput, duration, err := utils.CmdRun(actionData, config.GetConfigStr("global_cmd_prefix"), config.GetConfigStr("global_working_dir"))
+	cmdOutput, duration, err := utils.CmdRunContainerized(actionData, config.GetConfigStr("global_cmd_prefix"), config.GetConfigStr("global_working_dir"))
 	actionData.Cmd = origCmd
 	if err != nil {
 		if !actionData.Concurrent {

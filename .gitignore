@@ -288,6 +288,8 @@ pal.db/*
 pal
 upload/*
 !upload/.gitkeep
+actions/*
+!actions/.gitkeep
 *.pem
 *.key
 vendor
@@ -297,3 +299,4 @@ vendor
 *.archlinux
 *.ipk
 .vagrant
+pal.cookie
